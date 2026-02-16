@@ -1,0 +1,75 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// A Clerk organization. Created lazily on first API call from a new orgId.
+model Workspace {
+  id         String   @id @default(cuid())
+  clerkOrgId String   @unique
+  name       String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  vendors Vendor[]
+
+  @@map("workspaces")
+}
+
+/// A vendor being monitored by a workspace.
+model Vendor {
+  id          String    @id @default(cuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  url      String  /// The root HTTPS URL (e.g. "https://openai.com")
+  hostname String  /// Extracted hostname for display
+  name     String? /// Optional human-friendly name
+
+  /// The most recent scorecard JSON (full Scorecard object).
+  /// Stored as JSONB so we can query fields without deserializing.
+  latestScorecard Json?
+  latestScanAt    DateTime?
+
+  /// The previous scorecard JSON, retained for one-cycle diffing.
+  previousScorecard Json?
+  previousScanAt    DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  auditLogs AuditLog[]
+
+  @@unique([workspaceId, url])
+  @@index([workspaceId])
+  @@map("vendors")
+}
+
+/// Immutable log entry recording a material change detected by the cron monitor.
+model AuditLog {
+  id       String @id @default(cuid())
+  vendorId String
+  vendor   Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  /// What changed: "risk_increased", "risk_decreased", "new_finding", "finding_removed", "initial_scan"
+  eventType String
+
+  /// Human-readable summary of the change (e.g. "Overall risk escalated from LOW to HIGH")
+  summary String
+
+  /// Structured diff payload for programmatic consumption
+  diff Json?
+
+  /// Scorecard snapshot at the time of this event
+  scorecard Json
+
+  createdAt DateTime @default(now())
+
+  @@index([vendorId, createdAt])
+  @@map("audit_logs")
+}

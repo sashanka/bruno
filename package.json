@@ -7,13 +7,19 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest"
+    "test": "vitest",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.44",
     "@ai-sdk/react": "^3.0.88",
+    "@clerk/nextjs": "^6.37.4",
     "@mendable/firecrawl-js": "^4.12.1",
+    "@prisma/adapter-pg": "^7.4.0",
+    "@prisma/client": "^7.4.0",
     "ai": "^6.0.86",
+    "dotenv": "^17.3.1",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
@@ -27,6 +33,7 @@
     "@vitest/coverage-v8": "^4.0.18",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "prisma": "^7.4.0",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
     "typescript": "^5",
