@@ -11,7 +11,7 @@ Bruno is a Shadow AI Liability Extractor — a B2B micro-SaaS that scrapes vendo
 ## Architecture
 
 ```
-┌─────────────┐     ┌──────────────┐     ┌───────────────┐     ┌──────────────┐
+┌──────────────┐     ┌──────────────┐     ┌───────────────┐     ┌──────────────┐
 │  Next.js UI  │────▶│  Firecrawl   │────▶│  Claude LLM   │────▶│  Scorecard   │
 │  (App Router)│     │  (Scraper)   │     │  (AI SDK)     │     │  (Zod-typed) │
 └──────┬───────┘     └──────────────┘     └───────────────┘     └──────────────┘
