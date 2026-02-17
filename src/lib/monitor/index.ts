@@ -1,6 +1,7 @@
 import { generateObject } from "ai";
 import { anthropic } from "@ai-sdk/anthropic";
 import { prisma } from "@/lib/db/client";
+import type { Prisma } from "@prisma/client";
 import { scrapeVendorDocuments } from "@/lib/scraper";
 import { ScorecardSchema, type Scorecard } from "@/lib/schemas/scorecard";
 import { SYSTEM_PROMPT, buildUserPrompt } from "@/lib/ai/prompt";
@@ -93,8 +94,8 @@ export async function runMonitorCycle(): Promise<MonitorCycleResult> {
             vendorId: vendor.id,
             eventType,
             summary,
-            diff: diff as unknown as Record<string, unknown>,
-            scorecard: validated as unknown as Record<string, unknown>,
+            diff: diff as unknown as Prisma.InputJsonValue,
+            scorecard: validated as unknown as Prisma.InputJsonValue,
           },
         });
 
@@ -105,9 +106,9 @@ export async function runMonitorCycle(): Promise<MonitorCycleResult> {
       await prisma.vendor.update({
         where: { id: vendor.id },
         data: {
-          previousScorecard: vendor.latestScorecard,
+          previousScorecard: vendor.latestScorecard as Prisma.InputJsonValue ?? undefined,
           previousScanAt: vendor.latestScanAt,
-          latestScorecard: validated as unknown as Record<string, unknown>,
+          latestScorecard: validated as unknown as Prisma.InputJsonValue,
           latestScanAt: new Date(),
         },
       });
