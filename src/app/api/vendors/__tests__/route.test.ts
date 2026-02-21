@@ -115,8 +115,7 @@ describe("GET /api/vendors", () => {
   it("returns 401 when unauthenticated", async () => {
     mockAuth.mockResolvedValue({ orgId: null });
 
-    const req = new Request("http://localhost/api/vendors");
-    const res = await GET(req);
+    const res = await GET();
     expect(res.status).toBe(401);
   });
 
@@ -128,8 +127,7 @@ describe("GET /api/vendors", () => {
       ],
     });
 
-    const req = new Request("http://localhost/api/vendors");
-    const res = await GET(req);
+    const res = await GET();
     expect(res.status).toBe(200);
 
     const json = await res.json();
@@ -141,8 +139,7 @@ describe("GET /api/vendors", () => {
     mockAuth.mockResolvedValue({ orgId: "org_new" });
     mockFindUnique.mockResolvedValue(null);
 
-    const req = new Request("http://localhost/api/vendors");
-    const res = await GET(req);
+    const res = await GET();
     expect(res.status).toBe(200);
 
     const json = await res.json();
